@@ -1,2 +1,2 @@
 # Chrome-Extension-Project
-The Brogies creating a chrome extension. 
+The Brogeys creating a chrome extension. A super cool chrome extension.
