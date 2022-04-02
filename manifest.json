@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "BrogeyBackdrops",
+    "description": "Share google backdrops with your friends!",
+    "version": "1.0",
+    "icons": {
+        "16": "/icons/icon16-1.png",
+        "48": "/icons/icon48-1.png",
+        "128": "/icons/icon128-1.png"
+    },
+    "action": {
+        "default_icon" : {
+            "16": "/icons/icon16-2.png",
+            "48": "/icons/icon48-2.png",
+            "128": "/icons/icon128-2.png"
+        }
+    }
+}
