@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "BrogeyBackdrops",
-    "description": "Share google backdrops with your friends!",
+    "description": "Share google backdrops with your friends or enemies!",
     "version": "1.0",
     "icons": {
         "16": "/icons/16.png",
