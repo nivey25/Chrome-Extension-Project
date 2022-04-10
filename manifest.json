@@ -1,18 +1,21 @@
 {
     "manifest_version": 3,
     "name": "BrogeyBackdrops",
-    "description": "Share google backdrops with your friends!",
+    "description": "Share google backdrops with your friends or enemies!",
     "version": "1.0",
     "icons": {
-        "16": "/icons/icon16-1.png",
-        "48": "/icons/icon48-1.png",
-        "128": "/icons/icon128-1.png"
+        "16": "/icons/16.png",
+        "48": "/icons/48.png",
+        "128": "/icons/128.png"
     },
     "action": {
         "default_icon" : {
-            "16": "/icons/icon16-2.png",
-            "48": "/icons/icon48-2.png",
-            "128": "/icons/icon128-2.png"
+            "16": "/icons/16.png",
+            "48": "/icons/48.png",
+            "128": "/icons/128.png"
         }
+    },
+    "chrome_url_overrides": {
+        "newtab": "newImage.html"
     }
 }
