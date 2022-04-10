@@ -3,4 +3,4 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
     name = "shan"
-    return render_template("index.html", name=name)
+    return render_template("index.html")
