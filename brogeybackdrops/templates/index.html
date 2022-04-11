@@ -3,26 +3,19 @@
     <head>
         <style>
             body {
-                background-image: url('https://variety.com/wp-content/uploads/2020/01/taylor-swift-variety-cover-5-16x9-1000.jpg?w=681&h=383&crop=1');
+                background-image: url('../{{ picture[0]["photoPath"] }}');
                 background-repeat: no-repeat;
                 background-attachment: fixed;
                 background-size: cover;
             }
         </style>
-        <!-- <script>
-            function changeImage() {
-                var newImage={{ url }};
-                document.body.style.backgroundImage="url("+newImage+")";
-            }
-        </script> -->
     </head>
     <body>
         @ frontend: these are just buttons me and nivey need access to
-        
         <form method="POST" enctype="multipart/form-data">
-            <!-- onsubmit="changeImage(); return false;" -->
             <p><input type="file" name="imageFile" id="imageFile" accept="image/*"></p>
             <p><input type="submit" value="Upload"></p>
         </form>
+        {{ picture[0]["photoPath"] }}
     </body>
 </html>
