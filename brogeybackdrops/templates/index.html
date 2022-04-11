@@ -9,9 +9,19 @@
                 background-size: cover;
             }
         </style>
+        <script>
+            function changeImage() {
+                var newImage="https://penntoday.upenn.edu/sites/default/files/2021-11/Taylor%20Swift-social.jpg";
+                document.body.style.backgroundImage="url("+newImage+")";
+            }
+        </script>
     </head>
     <body>
-        <h2>Background Image</h2>
-        <p>By default, the background image will repeat itself if it is smaller than the element where it is specified, in this case the body element.</p>
+        @ frontend: these are just buttons me and nivey need access to
+        
+        <form onsubmit="changeImage(); return false;">
+            <p><input type="file" id="imageFile" accept="image/*"></p>
+            <p><input type="submit" value="Upload"></p>
+        </form>
     </body>
 </html>
