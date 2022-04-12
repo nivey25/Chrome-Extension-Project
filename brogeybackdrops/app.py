@@ -1,6 +1,7 @@
 import os
 import imghdr
 from cs50 import SQL
+#import sqlite3
 from flask import Flask, abort, current_app, render_template, request, redirect, session
 from flask_session import Session
 app = Flask(__name__)
@@ -11,6 +12,8 @@ app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.jpeg']
 app.config['UPLOAD_PATH'] = 'static/userImages'
 db = SQL("sqlite:///userdata.db")
+# conn = sqlite3.connect('userdata.db')
+# cur = conn.cursor()
 
 def validate_image(stream):
     header = stream.read(512)
@@ -34,8 +37,12 @@ def hello_world():
             if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
                 file_ext != validate_image(image.stream):
                 abort(400)
+            newCode = request.form.get("userCode")
+            num = db.execute("SELECT COUNT(*) FROM basicdata WHERE code='{}';".format(newCode))
+            if num[0]['COUNT(*)'] == 1:
+                return redirect("/") # will want error message here
             image.save(os.path.join(app.config['UPLOAD_PATH'], image.filename))
-            session["code"] = "no"
+            session["code"] = newCode
             photoPath = app.config['UPLOAD_PATH'] + "/" + image.filename
             db.execute("INSERT INTO basicdata (code, photoPath) VALUES (:code, :photoPath)", code=session["code"], photoPath=photoPath)
         return redirect("/")

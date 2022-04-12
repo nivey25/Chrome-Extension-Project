@@ -12,9 +12,9 @@
     </head>
     <body>
         @ frontend: these are just buttons me and nivey need access to
-        <form method="POST" enctype="multipart/form-data">
+        <form action="/" method="POST" enctype="multipart/form-data">
             <p><input type="file" name="imageFile" id="imageFile" accept="image/*"></p>
-            <p><input type="text" name="code" id="code" placeholder="Association code"></p>
+            <p><input type="text" name="userCode" placeholder="Association code"></p>
             <p><input type="submit" value="Upload"></p>
         </form>
         {{ picture[0]["photoPath"] }}
