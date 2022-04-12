@@ -1,14 +1,16 @@
 import os
 import imghdr
 from cs50 import SQL
-from flask import Flask, abort, current_app, render_template, request, redirect
+from flask import Flask, abort, current_app, render_template, request, redirect, session
+from flask_session import Session
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.jpeg']
 app.config['UPLOAD_PATH'] = 'static/userImages'
 db = SQL("sqlite:///userdata.db")
-
-code = "start"
 
 def validate_image(stream):
     header = stream.read(512)
@@ -21,8 +23,10 @@ def validate_image(stream):
 @app.route('/', methods=["GET", "POST"])
 def hello_world():
     if request.method == "GET":
-        picture = db.execute("SELECT photoPath FROM basicdata WHERE code=:code", code=code)
-        return render_template("index.html", picture=picture)
+        if "code" not in session:
+            session["code"] = "start"
+        picture = db.execute("SELECT photoPath FROM basicdata WHERE code=:code", code=session["code"])
+        return render_template("index.html", picture=picture, code=session["code"])
     else:
         image = request.files['imageFile']
         if image.filename != '':
@@ -31,8 +35,8 @@ def hello_world():
                 file_ext != validate_image(image.stream):
                 abort(400)
             image.save(os.path.join(app.config['UPLOAD_PATH'], image.filename))
-            #code = "no"
-            #photoPath = app.config['UPLOAD_PATH'] + "/" + image.filename
-            #db.execute("INSERT INTO basicdata (code, photoPath) VALUES (:code, :photoPath)", code=code, photoPath=photoPath)
+            session["code"] = "no"
+            photoPath = app.config['UPLOAD_PATH'] + "/" + image.filename
+            db.execute("INSERT INTO basicdata (code, photoPath) VALUES (:code, :photoPath)", code=session["code"], photoPath=photoPath)
         return redirect("/")
         
