@@ -43,4 +43,3 @@ def hello_world():
             photoPath = app.config['UPLOAD_PATH'] + "/" + image.filename
             db.execute("INSERT INTO basicdata (code, photoPath) VALUES (:code, :photoPath)", code=session["code"], photoPath=photoPath)
         return redirect("/")
-        
