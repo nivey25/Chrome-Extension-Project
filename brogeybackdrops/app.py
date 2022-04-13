@@ -25,9 +25,13 @@ def hello_world():
     if request.method == "GET":
         if "code" not in session:
             session["code"] = "start"
+            session["message"] = ""
+            session["display_alert"] = "False"
         picture = db.execute("SELECT photoPath FROM basicdata WHERE code=:code", code=session["code"])
-        return render_template("index.html", picture=picture, code=session["code"])
+        return render_template("index.html", picture=picture, code=session["code"], display_alert=session["display_alert"], message=session["message"])
     else:
+        session["message"] = ""
+        session["display_alert"] = "False"
         image = request.files['imageFile']
         if image.filename != '':
             file_ext = os.path.splitext(image.filename)[1]
@@ -37,6 +41,8 @@ def hello_world():
             newCode = request.form.get("userCode")
             num = db.execute("SELECT COUNT(*) FROM basicdata WHERE code='{}';".format(newCode))
             if num[0]['COUNT(*)'] == 1:
+                session["message"] = "Sorry, that code is taken!"
+                session["display_alert"] = "True"
                 return redirect("/")
             image.save(os.path.join(app.config['UPLOAD_PATH'], image.filename))
             session["code"] = newCode

@@ -1,6 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BrogeyBackdrops</title>
         <style>
             body {
                 background-image: url('../{{ picture[0]["photoPath"] }}');
@@ -10,7 +14,14 @@
             }
         </style>
     </head>
-    <body>
+    <body onload="errorMessage()">
+        <script>
+            function errorMessage() {
+                if ("{{ display_alert }}" == "True") {
+                    alert("{{ message }}");
+                }
+            }
+        </script>
         @ frontend: these are just buttons me and nivey need access to
         <form action="/" method="POST" enctype="multipart/form-data">
             <p><input type="file" name="imageFile" id="imageFile" accept="image/*"></p>
