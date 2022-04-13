@@ -33,12 +33,12 @@ def hello_world():
         session["message"] = ""
         session["display_alert"] = "False"
         image = request.files['imageFile']
-        if image.filename != '':
+        newCode = request.form.get("userCode")
+        if image.filename != '' and newCode != '':
             file_ext = os.path.splitext(image.filename)[1]
             if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
                 file_ext != validate_image(image.stream):
                 abort(400)
-            newCode = request.form.get("userCode")
             num = db.execute("SELECT COUNT(*) FROM basicdata WHERE code='{}';".format(newCode))
             if num[0]['COUNT(*)'] == 1:
                 session["message"] = "Sorry, that code is taken!"
@@ -48,5 +48,8 @@ def hello_world():
             session["code"] = newCode
             photoPath = app.config['UPLOAD_PATH'] + "/" + image.filename
             db.execute("INSERT INTO basicdata (code, photoPath) VALUES (:code, :photoPath)", code=session["code"], photoPath=photoPath)
+            return redirect("/")
+        session["message"] = "Some fields are blank, try again!"
+        session["display_alert"] = "True"
         return redirect("/")
         
