@@ -12,20 +12,16 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <p><span id="time"></span>
-        <script>
-        var dt = new Date();
-        document.getElementById("datetime").innerHTML = dt.toLocaleTimeString();
-        </script>
-        </p>
+        <div id = "digital-clock"> </div>
+        <script src = "script.js"> </script>
 
 
         <form role="search" id="form">
         <input type="search" id="query" name="q">
         <button>GO</button>
-        </form>
+    </form>
 
-        <script>
+    <script>
         const f = document.getElementById('form');
         const q = document.getElementById('query')
         const google = 'https://www.google.com/search?q=';
@@ -36,7 +32,42 @@
             const url = google + '+' + q.value;
             window.open(url);
         }
-        </script>
+    </script>
+    
+    <script>
+
+        function Time() {
+            var date = new Date();
+            var hour = date.getHours();
+            var minute = date.getMinutes();
+            var period = "";
+            if (hour >= 12) {
+                period = "PM";
+            } else {
+                period = "AM";
+            }
+            if (hour == 0) {
+                hour = 12;
+            } else {
+            if (hour > 12) {
+                hour = hour - 12;
+            }
+            }
+            hour = update(hour);
+            minute = update(minute);
+            document.getElementById("digital-clock").innerText = hour + " : " + minute + " " + period;
+            setTimeout(Time, 1000);
+            }
+        function update(minute) {
+            if (minute < 10) {
+            return "0" + minute;
+            }
+            else {
+            return minute;
+            }
+        }
+        Time();
+    </script>
 
         @ frontend: these are just buttons me and nivey need access to
         <form action="/" method="POST" enctype="multipart/form-data">
