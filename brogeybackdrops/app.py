@@ -122,3 +122,6 @@ def upload():
     session["display_alert"] = "True"
     return redirect("/")
 
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
