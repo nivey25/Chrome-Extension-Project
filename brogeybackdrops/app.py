@@ -6,7 +6,7 @@ from flask_session import Session
 # denotes this as a flask app
 app = Flask(__name__)
 # session variables
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 # necessary for image upload safety
@@ -122,3 +122,6 @@ def upload():
     session["display_alert"] = "True"
     return redirect("/")
 
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
