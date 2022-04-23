@@ -30,7 +30,7 @@ def validate_image(stream):
 # returns the number of images uploaded for the group
 # add milestones later
 def findPhotoNum(groupCode):
-    path = db.execute('SELECT photoPATH FROM groupdata WHERE code=:code;', code=groupCode)
+    path = db.execute('SELECT photoPATH FROM groupData WHERE code=:code;', code=groupCode)
     mainName = os.path.splitext(path[0]['photoPath'])[0]
     num = mainName[len(mainName)-1]
     return int(num)
@@ -42,17 +42,27 @@ def valueExists(table, key, value):
         return True
     return False
 
-def validateNewInfo(code, pin):
+def badInfo(code, pin):
     if len(pin) == 4 and pin.isnumeric():
         if len(code) == 5 and code.isalpha():
-            return True
-    return False
+            return False
+    return True
 
 def badUser(user):
     if user != None and user != '':
         if user.isalnum() and len(user) > 5:
             return False
     return True
+
+def pinMatch(code_v, pin):
+    pin_v = db.execute("SELECT pin FROM groupData WHERE code=:code", code=code_v)
+    if pin_v[0]['pin'] == pin:
+        return True
+    return False
+
+def getCurrCode(username):
+    code_v = db.execute("SELECT curr_code FROM userData WHERE username=:user", user=username)
+    return code_v[0]['curr_code']
 
 
 # display the main page
@@ -61,7 +71,7 @@ def start_page():
     if "display_alert" not in session:
         session["message"] = ""
         session["display_alert"] = "False"
-    if "code" not in session:
+    if "user" not in session:
         return render_template("start.html", display_alert=session["display_alert"], message=session["message"])
     return redirect("/home")
 
@@ -69,7 +79,7 @@ def start_page():
 def newUser():
     session["message"] = ""
     session["display_alert"] = "False"
-    newUser = request.form.get("newUsername")
+    newUser = request.form.get("newUsername").lower()
     if badUser(newUser):
         session["message"] = "Sorry that username is not valid"
         session["display_alert"] = "True"
@@ -79,14 +89,13 @@ def newUser():
         session["display_alert"] = "True"
         return redirect("/")
     session["user"] = newUser
-    session["code"] = "start"
-    db.execute("INSERT INTO userdata (username, curr_code) VALUES (:user, :code);", user=session["user"], code="start")
+    db.execute("INSERT INTO userData (username, curr_code) VALUES (:user, :code);", user=session["user"], code="start")
     return redirect("/home")
 
 @app.route('/home')
 def main_page():
-    picture = db.execute("SELECT photoPath FROM groupdata WHERE code=:code;", code=session["code"])
-    return render_template("index.html", picture=picture, code=session["code"], display_alert=session["display_alert"], message=session["message"])
+    picture = db.execute("SELECT photoPath FROM groupData WHERE code=:code;", code=getCurrCode(session["user"]))
+    return render_template("index.html", picture=picture, display_alert=session["display_alert"], message=session["message"])
 
 # registering new code       
 @app.route('/register', methods=["POST"])
@@ -95,10 +104,12 @@ def register():
     session["display_alert"] = "False"
 
     image = request.files['firstImage']
-    newCode = request.form.get("newCode")
-    if image.filename != '' and newCode != '':
-        if " " in str(image.filename) or " " in newCode:
-            session["message"] = "Spaces are not allowed in code or file names!"
+    newCode = request.form.get("newCode").lower()
+    newPin = request.form.get("newPin").lower()
+    caption = request.form.get("firstCap")
+    if image.filename != '' and newCode != '' and newPin != '':
+        if " " in str(image.filename):
+            session["message"] = "Spaces are not allowed in file names!"
             session["display_alert"] = "True"
             return redirect("/home")
         file_ext = os.path.splitext(image.filename)[1]
@@ -106,15 +117,19 @@ def register():
             session["message"] = "Sorry, invalid file!"
             session["display_alert"] = "True"
             return redirect("/home")
-        if valueExists("groupdata", "code", newCode):
+        if badInfo(newCode, newPin):
+            session["message"] = "Code or pin are invalid!"
+            session["display_alert"] = "True"
+            return redirect("/home")
+        if valueExists("groupData", "code", newCode):
             session["message"] = "Sorry, that code is taken!"
             session["display_alert"] = "True"
             return redirect("/home")
-        session["code"] = newCode
         filename = newCode + "_1" + file_ext
         photoPath = os.path.join(app.config['UPLOAD_PATH'], filename)
         image.save(photoPath)
-        db.execute("INSERT INTO groupdata (code, photoPath) VALUES (:code, :photoPath);", code=session["code"], photoPath=photoPath)
+        db.execute("INSERT INTO groupData (code, photoPath, caption, pin) VALUES (:code, :photoPath, :caption, :pin);", code=newCode, photoPath=photoPath, caption=caption, pin=newPin)
+        db.execute("UPDATE userData SET curr_code = :code WHERE username = :user;", code=newCode, user=session["user"])
         return redirect("/home")
     session["message"] = "Some fields are blank, try again!"
     session["display_alert"] = "True"
@@ -125,10 +140,15 @@ def register():
 def existing():
     session["message"] = ""
     session["display_alert"] = "False"
-    joinCode = request.form.get("existingCode")
-    if joinCode != '':
+    joinCode = request.form.get("existingCode").lower()
+    joinPin = request.form.get("existingPin").lower()
+    if joinCode != '' and joinPin != '':
         if valueExists("groupdata", "code", joinCode):
-            session["code"] = joinCode
+            if pinMatch(joinCode, joinPin):
+                db.execute("UPDATE userData SET curr_code = :code WHERE username = :user;", code=joinCode, user=session["user"])
+                return redirect("/home")
+            session["message"] = "Sorry, that pin does not match the code!"
+            session["display_alert"] = "True"
             return redirect("/home")
         session["message"] = "Code does not exist, please register it!"
         session["display_alert"] = "True"
@@ -137,14 +157,15 @@ def existing():
     session["display_alert"] = "True"
     return redirect("/home")
 
-# Add new pictures to your group (also later images)
+# Add new pictures to your group
 @app.route('/upload', methods=["POST"])
 def upload():
     session["message"] = ""
     session["display_alert"] = "False"
     image = request.files['shareImage']
+    caption = request.form.get("shareCap")
     if image.filename != '':
-        if session["code"] == "start":
+        if getCurrCode(session["user"]) == "start":
             session["message"] = "You are not on a group code, try again!"
             session["display_alert"] = "True"
             return redirect("/home")
@@ -153,12 +174,13 @@ def upload():
             session["message"] = "Sorry, invalid file!"
             session["display_alert"] = "True"
             return redirect("/home")
-        num = findPhotoNum(session["code"]) + 1
-        filename = session["code"] + "_" + str(num) + file_ext
+        num = findPhotoNum(getCurrCode(session["user"])) + 1
+        filename = getCurrCode(session["user"]) + "_" + str(num) + file_ext
         photoPath = os.path.join(app.config['UPLOAD_PATH'], filename)
         image.save(photoPath)
-        db.execute("UPDATE groupdata SET photoPath = :photoPath WHERE code = :code;", photoPath=photoPath, code=session["code"])
-        os.remove(app.config['UPLOAD_PATH'] + "/" + session["code"] + "_" + str(num-1) + file_ext)
+        db.execute("UPDATE groupData SET photoPath = :photoPath WHERE code = :code;", photoPath=photoPath, code=getCurrCode(session["user"]))
+        db.execute("UPDATE groupData SET caption = :caption WHERE code = :code;", caption=caption, code=getCurrCode(session["user"]))
+        os.remove(app.config['UPLOAD_PATH'] + "/" + getCurrCode(session["user"]) + "_" + str(num-1) + file_ext)
         return redirect("/home")
     session["message"] = "No file uploaded, try again!"
     session["display_alert"] = "True"
