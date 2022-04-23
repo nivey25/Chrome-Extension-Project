@@ -16,7 +16,7 @@
         <!-- Commented bc these files arent in the repo rn but feel free to uncomment when they are! -->
         <!-- <link rel="stylesheet" href="style.css"> -->
     </head>
-    <body onload="errorMessage()">
+    <body onload="dropdown(); errorMessage();">
         <script>
             function errorMessage() {
                 if ("{{ display_alert }}" == "True") {
@@ -24,7 +24,7 @@
                 }
             }
         </script>
-    <body>
+        <body>
         <div id = "digital-clock"> </div>
         <!-- Commented bc these files arent in the repo rn but feel free to uncomment when they are! -->
         <!-- <script src = "script.js"> </script> -->
@@ -79,23 +79,61 @@
                 }
             }
             Time();
-        </script>
-
-        <p>Register a new code</p>
-        <form action="/register" method="POST" enctype="multipart/form-data">
-            <p><input type="file" name="imageFile" id="imageFile" accept="image/*"></p>
-            <p><input type="text" name="userCode" placeholder="Association code"></p>
-            <p><input type="submit" value="Upload"></p>
-        </form> 
-        <p>Enter an existing code</p>
+        </script> 
+        <!-- backend inputs -->
+        <br><br>
+        Select action: <select id="dropDown" onchange="dropdown()">
+            <option value="one" selected="selected" id="enter_code">Join a group</option>
+            <option value="two" id="register_new">Register new group</option>
+            <option value="three" id="change_picture">Change group image</option>
+        </select>
+           
+        <div id="wrapperOne" style="display:none">
         <form action="/existing" method="POST" enctype="multipart/form-data">
-            <p><input type="text" name="existingCode" placeholder="Association code"></p>
+            <p><input type="text" name="existingCode" placeholder="5-letter group code"></p> 
+            <p><input type="text" name="existingPin" placeholder="4-digit pin"></p>
             <p><input type="submit" value="Join group!"></p>
         </form>   
-        <p>Change group settings</p>
+        </div>
+        <div id="wrapperTwo" style="display:none">
+        <form action="/register" method="POST" enctype="multipart/form-data">
+            <p><input type="file" name="firstImage" accept="image/*"></p>
+            <p><input type="text" name="newCode" placeholder="5-letter group code"></p>
+            <p><input type="text" name="newPin" placeholder="4-digit pin"></p>
+            <p><input type="text" name="firstCap" placeholder="Caption"></p>
+            <p><input type="submit" value="Upload"></p>
+        </form> 
+        </div>
+        <div id="wrapperThree" style="display:none">
         <form action="/upload" method="POST" enctype="multipart/form-data">
-            <p><input type="file" name="shareFile" id="shareFile" accept="image/*"></p>
+            <p><input type="file" name="shareImage" accept="image/*"></p>
+            <p><input type="text" name="shareCap" placeholder="Caption"></p>
             <p><input type="submit" value="Send to Friends!"></p>
-        </form>  
+        </form> 
+        </div>
+
+        <script>
+            var dropDown = document.getElementById("dropDown"),
+            myWrappers = [
+                document.getElementById("wrapperOne"),
+                document.getElementById("wrapperTwo"),
+                document.getElementById("wrapperThree")
+            ];
+            function dropdown() {
+                for (i=0; i<myWrappers.length; i++){
+                    if(dropDown.value === "one"){
+                        myWrappers[i].style.display = "none";
+                        myWrappers[0].style.display = "block";
+                    } else if(dropDown.value === "two"){
+                        myWrappers[i].style.display = "none";
+                        myWrappers[1].style.display = "block";
+                    } else if(dropDown.value === "three"){
+                        myWrappers[i].style.display = "none";
+                        myWrappers[2].style.display = "block";
+                    }
+                }
+            }   
+        </script>
+        <!-- end of backend inputs -->
     </body>
 </html>
