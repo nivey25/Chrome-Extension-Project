@@ -117,6 +117,7 @@ def upload():
         photoPath = os.path.join(app.config['UPLOAD_PATH'], filename)
         image.save(photoPath)
         db.execute("UPDATE basicdata SET photoPath = :photoPath WHERE code = :code;", photoPath=photoPath, code=session["code"])
+        os.remove(app.config['UPLOAD_PATH'] + "/" + session["code"] + "_" + str(num-1) + file_ext)
         return redirect("/")
     session["message"] = "No file uploaded, try again!"
     session["display_alert"] = "True"

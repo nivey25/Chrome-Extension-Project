@@ -16,7 +16,7 @@
         <!-- Commented bc these files arent in the repo rn but feel free to uncomment when they are! -->
         <!-- <link rel="stylesheet" href="style.css"> -->
     </head>
-    <body onload="errorMessage()">
+    <body onload="test(); errorMessage();">
         <script>
             function errorMessage() {
                 if ("{{ display_alert }}" == "True") {
@@ -79,23 +79,55 @@
                 }
             }
             Time();
-        </script>
-
-        <p>Register a new code</p>
+        </script> 
+        <br><br>
+        Select action: <select id="dropDown" onchange="test()">
+            <option value="one" selected="selected" id="enter_code">Join a group</option>
+            <option value="two" id="register_new">Register new group</option>
+            <option value="three" id="change_picture">Change group image</option>
+        </select>
+           
+        <div id="wrapperOne" style="display:none">
+        <form action="/existing" method="POST" enctype="multipart/form-data">
+            <p><input type="text" name="existingCode" placeholder="Association code"></p>
+            <p><input type="submit" value="Join group!"></p>
+        </form>   
+        </div>
+        <div id="wrapperTwo" style="display:none">
         <form action="/register" method="POST" enctype="multipart/form-data">
             <p><input type="file" name="imageFile" id="imageFile" accept="image/*"></p>
             <p><input type="text" name="userCode" placeholder="Association code"></p>
             <p><input type="submit" value="Upload"></p>
         </form> 
-        <p>Enter an existing code</p>
-        <form action="/existing" method="POST" enctype="multipart/form-data">
-            <p><input type="text" name="existingCode" placeholder="Association code"></p>
-            <p><input type="submit" value="Join group!"></p>
-        </form>   
-        <p>Change group settings</p>
+        </div>
+        <div id="wrapperThree" style="display:none">
         <form action="/upload" method="POST" enctype="multipart/form-data">
             <p><input type="file" name="shareFile" id="shareFile" accept="image/*"></p>
             <p><input type="submit" value="Send to Friends!"></p>
-        </form>  
+        </form> 
+        </div>
+
+        <script>
+            var dropDown = document.getElementById("dropDown"),
+            myWrappers = [
+                document.getElementById("wrapperOne"),
+                document.getElementById("wrapperTwo"),
+                document.getElementById("wrapperThree")
+            ];
+            function test() {
+                for (i=0; i<myWrappers.length; i++){
+                    if(dropDown.value === "one"){
+                        myWrappers[i].style.display = "none";
+                        myWrappers[0].style.display = "block";
+                    } else if(dropDown.value === "two"){
+                        myWrappers[i].style.display = "none";
+                        myWrappers[1].style.display = "block";
+                    } else if(dropDown.value === "three"){
+                        myWrappers[i].style.display = "none";
+                        myWrappers[2].style.display = "block";
+                    }
+                }
+            }   
+        </script>
     </body>
 </html>
