@@ -50,7 +50,7 @@ def validateNewInfo(code, pin):
 
 def badUser(user):
     if user != None and user != '':
-        if user.isalnum():
+        if user.isalnum() and len(user) > 5:
             return False
     return True
 
