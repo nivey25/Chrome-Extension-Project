@@ -1,5 +1,5 @@
 # Chrome-Extension-Project
-The Brogeys creating a chrome extension. A super cool chrome extension.
+Chrome extension inspired by the Locket Widget App. Share new tab chrome backgrounds with your friends!
 
 Starter code taken from https://www.youtube.com/watch?v=uV4L-wcnK3Y
 
