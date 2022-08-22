@@ -97,6 +97,19 @@ def main_page():
     picture = db.execute("SELECT photoPath FROM groupData WHERE code=:code;", code=getCurrCode(session["user"]))
     return render_template("index.html", picture=picture, display_alert=session["display_alert"], message=session["message"])
 
+@app.route('/new-group')
+def newgroup_page():
+    return render_template("newgroup.html", display_alert=session["display_alert"], message=session["message"])
+
+@app.route('/join-group')
+def joingroup_page():
+    return render_template("joingroup.html", display_alert=session["display_alert"], message=session["message"])
+
+@app.route('/change-background')
+def changepicture_page():
+    return render_template("changephoto.html", display_alert=session["display_alert"], message=session["message"])
+
+
 # registering new code       
 @app.route('/register', methods=["POST"])
 def register():
@@ -111,20 +124,20 @@ def register():
         if " " in str(image.filename):
             session["message"] = "Spaces are not allowed in file names!"
             session["display_alert"] = "True"
-            return redirect("/home")
+            return redirect("/new-group")
         file_ext = os.path.splitext(image.filename)[1]
         if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or file_ext != validate_image(image.stream):
             session["message"] = "Sorry, invalid file!"
             session["display_alert"] = "True"
-            return redirect("/home")
+            return redirect("/new-group")
         if badInfo(newCode, newPin):
             session["message"] = "Code or pin are invalid!"
             session["display_alert"] = "True"
-            return redirect("/home")
+            return redirect("/new-group")
         if valueExists("groupData", "code", newCode):
             session["message"] = "Sorry, that code is taken!"
             session["display_alert"] = "True"
-            return redirect("/home")
+            return redirect("/new-group")
         filename = newCode + "_1" + file_ext
         photoPath = os.path.join(app.config['UPLOAD_PATH'], filename)
         image.save(photoPath)
@@ -133,7 +146,7 @@ def register():
         return redirect("/home")
     session["message"] = "Some fields are blank, try again!"
     session["display_alert"] = "True"
-    return redirect("/home")
+    return redirect("/new-group")
 
 # connecting to existing
 @app.route('/existing', methods=["POST"])
@@ -149,13 +162,13 @@ def existing():
                 return redirect("/home")
             session["message"] = "Sorry, that pin does not match the code!"
             session["display_alert"] = "True"
-            return redirect("/home")
+            return redirect("/join-group")
         session["message"] = "Code does not exist, please register it!"
         session["display_alert"] = "True"
-        return redirect("/home")
+        return redirect("/join-group")
     session["message"] = "Field is blank, try again!"
     session["display_alert"] = "True"
-    return redirect("/home")
+    return redirect("/join-group")
 
 # Add new pictures to your group
 @app.route('/upload', methods=["POST"])
@@ -168,23 +181,24 @@ def upload():
         if getCurrCode(session["user"]) == "start":
             session["message"] = "You are not on a group code, try again!"
             session["display_alert"] = "True"
-            return redirect("/home")
+            return redirect("/change-background")
         file_ext = os.path.splitext(image.filename)[1]
         if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or file_ext != validate_image(image.stream):
             session["message"] = "Sorry, invalid file!"
             session["display_alert"] = "True"
-            return redirect("/home")
+            return redirect("/change-background")
         num = findPhotoNum(getCurrCode(session["user"])) + 1
         filename = getCurrCode(session["user"]) + "_" + str(num) + file_ext
         photoPath = os.path.join(app.config['UPLOAD_PATH'], filename)
         image.save(photoPath)
         db.execute("UPDATE groupData SET photoPath = :photoPath WHERE code = :code;", photoPath=photoPath, code=getCurrCode(session["user"]))
         db.execute("UPDATE groupData SET caption = :caption WHERE code = :code;", caption=caption, code=getCurrCode(session["user"]))
-        os.remove(app.config['UPLOAD_PATH'] + "/" + getCurrCode(session["user"]) + "_" + str(num-1) + file_ext)
+        # os.remove(app.config['UPLOAD_PATH'] + "/" + getCurrCode(session["user"]) + "_" + str(num-1) + file_ext)
+        # THIS IS CURRENTLY AN ISSUE IF THEY DONT HAVE THE SAME EXT!
         return redirect("/home")
     session["message"] = "No file uploaded, try again!"
     session["display_alert"] = "True"
-    return redirect("/home")
+    return redirect("/change-background")
 
 @app.before_request
 def make_session_permanent():

@@ -5,6 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>BrogeyBackdrops</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
         <style>
             body {
                 background-image: url('../{{ picture[0]["photoPath"] }}');
@@ -23,18 +24,45 @@
                     alert("{{ message }}");
                 }
             }
+            
         </script>
-        <body>
-        <div id = "digital-clock"> </div>
-        <!-- Commented bc these files arent in the repo rn but feel free to uncomment when they are! -->
-        <!-- <script src = "script.js"> </script> -->
-
-        <form role="search" id="form">
-            <input type="search" id="query" name="q">
-            <button>GO</button>
-        </form>
-
-        <script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+        <nav class="navbar navbar-expand-lg bg-light">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">Buddy Backdrops</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" id = "digital-clock"></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/home">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="https://github.com/nivey25/Chrome-Extension-Project">GitHub</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Select Action
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/join-group">Join a group</a></li>
+                      <li><a class="dropdown-item" href="/new-group">Register a new group</a></li>
+                      <li><a class="dropdown-item" href="/change-background">Change group photo</a></li>
+                    </ul>
+                  </li>
+                </ul>
+                <form role="search" id="form" class="d-flex">
+                  <input id="query" name="q" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                  <button class="btn btn-outline-success">Search</button>
+                </form>
+              </div>
+            </div>
+          </nav>
+          <script>
             const f = document.getElementById('form');
             const q = document.getElementById('query')
             const google = 'https://www.google.com/search?q=';
@@ -46,7 +74,6 @@
                 window.open(url);
             }
         </script>
-    
         <script>
             function Time() {
                 var date = new Date();
@@ -80,60 +107,5 @@
             }
             Time();
         </script> 
-        <!-- backend inputs -->
-        <br><br>
-        Select action: <select id="dropDown" onchange="dropdown()">
-            <option value="one" selected="selected" id="enter_code">Join a group</option>
-            <option value="two" id="register_new">Register new group</option>
-            <option value="three" id="change_picture">Change group image</option>
-        </select>
-           
-        <div id="wrapperOne" style="display:none">
-        <form action="/existing" method="POST" enctype="multipart/form-data">
-            <p><input type="text" name="existingCode" placeholder="5-letter group code"></p> 
-            <p><input type="text" name="existingPin" placeholder="4-digit pin"></p>
-            <p><input type="submit" value="Join group!"></p>
-        </form>   
-        </div>
-        <div id="wrapperTwo" style="display:none">
-        <form action="/register" method="POST" enctype="multipart/form-data">
-            <p><input type="file" name="firstImage" accept="image/*"></p>
-            <p><input type="text" name="newCode" placeholder="5-letter group code"></p>
-            <p><input type="text" name="newPin" placeholder="4-digit pin"></p>
-            <p><input type="text" name="firstCap" placeholder="Caption"></p>
-            <p><input type="submit" value="Upload"></p>
-        </form> 
-        </div>
-        <div id="wrapperThree" style="display:none">
-        <form action="/upload" method="POST" enctype="multipart/form-data">
-            <p><input type="file" name="shareImage" accept="image/*"></p>
-            <p><input type="text" name="shareCap" placeholder="Caption"></p>
-            <p><input type="submit" value="Send to Friends!"></p>
-        </form> 
-        </div>
-
-        <script>
-            var dropDown = document.getElementById("dropDown"),
-            myWrappers = [
-                document.getElementById("wrapperOne"),
-                document.getElementById("wrapperTwo"),
-                document.getElementById("wrapperThree")
-            ];
-            function dropdown() {
-                for (i=0; i<myWrappers.length; i++){
-                    if(dropDown.value === "one"){
-                        myWrappers[i].style.display = "none";
-                        myWrappers[0].style.display = "block";
-                    } else if(dropDown.value === "two"){
-                        myWrappers[i].style.display = "none";
-                        myWrappers[1].style.display = "block";
-                    } else if(dropDown.value === "three"){
-                        myWrappers[i].style.display = "none";
-                        myWrappers[2].style.display = "block";
-                    }
-                }
-            }   
-        </script>
-        <!-- end of backend inputs -->
     </body>
 </html>
