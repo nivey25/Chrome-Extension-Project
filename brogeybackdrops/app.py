@@ -100,9 +100,11 @@ def main_page():
     if getCurrCode(session["user"]) != "start":
         for x in dict_people:
             people.append(x['username'])
+        group_name=getCurrCode(session["user"])
     else:
+        group_name="No Group"
         people.append("Join/create a group to see members!")
-    return render_template("index.html", picture=picture, display_alert=session["display_alert"], message=session["message"], people=people)
+    return render_template("index.html", picture=picture, display_alert=session["display_alert"], message=session["message"], people=people, group_name=group_name)
 
 @app.route('/new-group')
 def newgroup_page():
