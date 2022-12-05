@@ -1,21 +1,21 @@
 {
-    "manifest_version": 3,
-    "name": "BrogeyBackdrops",
-    "description": "Share google backdrops with your friends or enemies!",
-    "version": "1.0",
-    "icons": {
-        "16": "/icons/buddyLogo16.png",
-        "48": "/icons/buddyLogo48.png",
-        "128": "/icons/buddyLogo128.png"
-    },
-    "action": {
-        "default_icon" : {
-            "16": "/icons/buddyLogo16.png",
-            "48": "/icons/buddyLogo48.png",
-            "128": "/icons/buddyLogo128.png"
-        }
-    },
-    "chrome_url_overrides": {
-        "newtab": "newImage.html"
+  "manifest_version": 3,
+  "name": "BuddyBackdrops",
+  "description": "Share google backdrops with your friends or enemies!",
+  "version": "1.0",
+  "icons": {
+    "16": "/icons/buddyLogo16.png",
+    "48": "/icons/buddyLogo48.png",
+    "128": "/icons/buddyLogo128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "/icons/buddyLogo16.png",
+      "48": "/icons/buddyLogo48.png",
+      "128": "/icons/buddyLogo128.png"
     }
+  },
+  "chrome_url_overrides": {
+    "newtab": "newImage.html"
+  }
 }
