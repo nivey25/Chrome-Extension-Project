@@ -96,6 +96,7 @@ def newUser():
 def main_page():
     picture = db.execute("SELECT photoPath FROM groupData WHERE code=:code;", code=getCurrCode(session["user"]))
     dict_people = db.execute("SELECT username FROM userData WHERE curr_code=:code;", code=getCurrCode(session["user"]))
+    caption = db.execute("SELECT caption FROM groupData WHERE code=:code;", code=getCurrCode(session["user"]))
     people = []
     if getCurrCode(session["user"]) != "start":
         for x in dict_people:
@@ -104,7 +105,7 @@ def main_page():
     else:
         group_name="No Group"
         people.append("Join/create a group to see members!")
-    return render_template("index.html", picture=picture, display_alert=session["display_alert"], message=session["message"], people=people, group_name=group_name)
+    return render_template("index.html", picture=picture, caption=caption, display_alert=session["display_alert"], message=session["message"], people=people, group_name=group_name)
 
 @app.route('/new-group')
 def newgroup_page():
